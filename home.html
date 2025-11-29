@@ -1,0 +1,2571 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragon Media | Thanjavur</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+    <link rel="shortcut icon" href="logo-dm.PNG" type="image/x-icon">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* Hide default cursor */
+            /* cursor: none;  */
+        }
+
+        :root {
+            --primary: #6C63FF;
+            --secondary: #FF6584;
+            --accent: #00D4FF;
+            --dark: #0A0A14;
+            --darker: #050509;
+            --light: #F5F5F7;
+            --text: #e6eef8;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .company-logo{
+            width: 40px;
+            border-radius: 5px;
+        }
+        .game-section {
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+            text-align: center;
+            cursor: auto;
+            /* transition: opacity 0.5s ease; */
+        }
+
+        .website-section {
+            display: none;
+            width: 100%;
+            cursor: none;
+            /* Fix website section initial display */
+            position: relative;
+            top: 0;
+            left: 0;
+            /* transition: opacity 0.5s ease; */
+        }
+
+        .header {
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(0, 195, 255, 0.7);
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            animation: slideIn 0.8s ease-out;
+        }
+
+        .instructions h2 {
+            margin-bottom: 15px;
+            color: #4facfe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .instructions p {
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        .game-area {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        #rocket {
+            position: absolute;
+            width: 80px;
+            height: 150px;
+            cursor: grab;
+            z-index: 10;
+            transition: transform 0.3s, filter 0.3s;
+        }
+
+        #rocket:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+        }
+
+        #rocket:active {
+            cursor: grabbing;
+        }
+
+        .rocket-body {
+            position: absolute;
+            width: 80px;
+            height: 120px;
+            background: linear-gradient(to right, #8e9eab, #eef2f3);
+            border-radius: 10px 10px 5px 5px;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+
+        .rocket-top {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 40px solid transparent;
+            border-right: 40px solid transparent;
+            border-bottom: 40px solid #ff6b6b;
+            top: -40px;
+        }
+
+        .rocket-fin-left,
+        .rocket-fin-right {
+            position: absolute;
+            width: 0;
+            height: 0;
+            bottom: 0;
+        }
+
+        .rocket-fin-left {
+            border-right: 40px solid #ff6b6b;
+            border-top: 30px solid transparent;
+            border-bottom: 30px solid transparent;
+            left: -25px;
+        }
+
+        .rocket-fin-right {
+            border-left: 40px solid #ff6b6b;
+            border-top: 30px solid transparent;
+            border-bottom: 30px solid transparent;
+            right: -25px;
+        }
+
+        .rocket-window {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background: #4fc3f7;
+            border-radius: 50%;
+            top: 30px;
+            left: 27.5px;
+            box-shadow: 0 0 10px rgba(79, 195, 247, 0.8);
+        }
+
+        #launcher {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 180px;
+            z-index: 5;
+        }
+
+        .launcher-base {
+            position: absolute;
+            width: 120px;
+            height: 25px;
+            background: #78909c;
+            bottom: 0;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .launcher-pole {
+            position: absolute;
+            width: 12px;
+            height: 155px;
+            background: #546e7a;
+            bottom: 25px;
+            left: 54px;
+        }
+
+        .launcher-holder {
+            position: absolute;
+            width: 80px;
+            height: 12px;
+            background: #37474f;
+            bottom: 180px;
+            left: 20px;
+            border-radius: 5px;
+        }
+
+        .drop-zone {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 200px;
+            border: 3px dashed rgba(79, 195, 247, 0.5);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(79, 195, 247, 0.7);
+            font-weight: bold;
+            transition: all 0.3s;
+            z-index: 2;
+        }
+
+        .drop-zone.active {
+            border-color: #4fc3f7;
+            background: rgba(79, 195, 247, 0.1);
+            box-shadow: 0 0 20px rgba(79, 195, 247, 0.3);
+        }
+
+        #launch-btn {
+            background: linear-gradient(to bottom, #ff6b6b, #ff4757);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 5px 20px rgba(255, 107, 107, 0.5);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        #launch-btn:hover:not(:disabled) {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.7);
+        }
+
+        #launch-btn:disabled {
+            background: linear-gradient(to bottom, #78909c, #546e7a);
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        #countdown {
+            font-size: 6rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+            display: none;
+            z-index: 20;
+            animation: pulse 1s infinite;
+        }
+
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0.2;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .fire {
+            position: absolute;
+            width: 50px;
+            height: 80px;
+            background: linear-gradient(to top, #ff9500, #ff3b30);
+            border-radius: 50% 50% 20% 20%;
+            bottom: -80px;
+            left: 15px;
+            opacity: 0;
+            z-index: 1;
+            box-shadow: 0 0 30px 15px rgba(255, 149, 0, 0.7);
+        }
+
+        .launching .fire {
+            animation: fireAnimation 0.5s infinite alternate;
+        }
+
+        @keyframes fireAnimation {
+            from {
+                height: 80px;
+                opacity: 0.8;
+            }
+
+            to {
+                height: 120px;
+                opacity: 1;
+            }
+        }
+
+        .rocket-launch {
+            animation: rocketLaunch 4s forwards;
+        }
+
+        @keyframes rocketLaunch {
+            0% {
+                transform: translateY(0) rotate(0);
+            }
+
+            20% {
+                transform: translateY(-150px) rotate(0);
+            }
+
+            100% {
+                transform: translateY(-1200px) rotate(5deg);
+            }
+        }
+
+        .reset-btn {
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(79, 195, 247, 0.5);
+            transition: all 0.3s;
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(79, 195, 247, 0.7);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .stage-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stage-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s;
+        }
+
+        .stage-dot.active {
+            background: #4facfe;
+            transform: scale(1.2);
+        }
+
+        .comet {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px 2px white;
+            opacity: 0;
+        }
+
+        /* Website Styles */
+        .website-body {
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: var(--light);
+            overflow-x: hidden;
+            cursor: none;
+            min-height: 100vh;
+            z-index: 900;
+            position: relative;
+            top: 0;
+            left: 0;
+        }
+
+        #custom-cursor {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: transform 0.1s ease-out;
+            will-change: transform;
+        }
+
+        .cursor-follower {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transition: transform 0.15s ease-out, opacity 0.3s ease;
+            will-change: transform;
+        }
+
+        .cursor-trail {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: var(--secondary);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9997;
+            opacity: 0;
+        }
+
+        .containerx {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            width: 100%;
+        }
+
+        /* Header */
+        .website-header {
+            padding: 30px 0;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(10, 10, 20, 0.7);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            top: 0;
+            left: 0;
+        }
+
+        .s-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 8px 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .nav-links a:hover:after {
+            width: 100%;
+        }
+
+        .cta-nav {
+            padding: 12px 28px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(108, 99, 255, 0.3);
+        }
+
+        .cta-nav:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(108, 99, 255, 0.5);
+        }
+
+        /* Mobile Menu */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+            z-index: 1000;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: var(--light);
+            transition: all 0.3s ease;
+        }
+
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            height: 100vh;
+            background: var(--darker);
+            z-index: 200;
+            transition: right 0.3s ease;
+            padding: 80px 30px 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .mobile-nav.active {
+            right: 0;
+        }
+
+        .mobile-nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-size: 1.2rem;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: color 0.3s ease;
+        }
+
+        .mobile-nav a:hover {
+            color: var(--accent);
+        }
+
+        .close-menu {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding-top: 100px;
+            width: 100%;
+        }
+
+        .hero-content {
+            /* max-width: 650px; */
+            z-index: 10;
+            position: relative;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            color: rgba(245, 245, 247, 0.8);
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 42px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(108, 99, 255, 0.4);
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(108, 99, 255, 0.6);
+        }
+
+        .hero-visual {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50%;
+            height: 70%;
+            z-index: 1;
+        }
+
+        #canvas-container {
+            width: 100%;
+            height: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            opacity: 0.1;
+            filter: blur(40px);
+        }
+
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 10%;
+            animation: float 15s ease-in-out infinite;
+        }
+
+        .shape-2 {
+            width: 200px;
+            height: 200px;
+            bottom: 20%;
+            right: 15%;
+            animation: float 12s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-30px) rotate(10deg);
+            }
+        }
+
+        /* Features Section */
+        .features {
+            /* padding: 150px 0 0 0; */
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 80px;
+            /* opacity: 0;
+            transform: translateY(50px); */
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(108, 99, 255, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border-color: rgba(108, 99, 255, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 50px;
+            margin-bottom: 25px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .feature-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            color: rgba(245, 245, 247, 0.7);
+            line-height: 1.6;
+        }
+
+        /* Text Scroll */
+        .scroll-text {
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+
+        }
+
+        .container-Scroll {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-Scroll {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-Scroll::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00dbde, #fc00ff, #00dbde);
+            z-index: -1;
+            border-radius: 22px;
+            opacity: 0.2;
+            animation: borderGlow 6s linear infinite;
+        }
+
+        @keyframes borderGlow {
+            0% {
+                filter: hue-rotate(0deg);
+            }
+
+            100% {
+                filter: hue-rotate(360deg);
+            }
+        }
+
+        .section-Scroll-title {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+            color: #e0e0e0;
+
+        }
+
+        .marquee-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            padding: 15px 0;
+        }
+
+        .marquee-track {
+            display: flex;
+            width: max-content;
+            animation: marquee 40s linear infinite;
+        }
+
+        .marquee-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 200px;
+            height: 80px;
+            margin: 0 15px;
+            padding: 15px 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #e0e0e0;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .marquee-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: 0.5s;
+        }
+
+        .marquee-item:hover {
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 15px rgba(124, 77, 255, 0.7);
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .marquee-item:hover::before {
+            left: 100%;
+        }
+
+        .marquee-item i {
+            margin-right: 10px;
+            font-size: 1.4rem;
+        }
+
+        .marquee-item.paused {
+            animation-play-state: paused;
+        }
+
+        @keyframes marquee {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        #controls-Scroll {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 15px;
+        }
+
+        .btn-Glassy {
+            padding: 12px 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-Glassy:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 10px rgba(124, 77, 255, 0.5);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 100px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cta-section h2 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .cta-section p {
+            font-size: 1.3rem;
+            margin-bottom: 50px;
+            color: rgba(245, 245, 247, 0.8);
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        /* Footer */
+        .website-footer {
+            padding: 80px 0 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .footer-about {
+            max-width: 400px;
+        }
+
+        .footer-about h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        .footer-about p {
+            line-height: 1.6;
+            color: rgba(245, 245, 247, 0.7);
+        }
+
+        .footer-links h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: rgba(245, 245, 247, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+
+        /* .website-footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 50px;
+        } */
+
+        .social-links {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            text-decoration: none;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            transform: translateY(-5px);
+        }
+
+        .website-footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: rgba(245, 245, 247, 0.6);
+        }
+
+        /* Interactive Particles */
+        .particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .text-body {
+            color: var(--text);
+            padding: 20px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .main-headingA {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #60a5fa, #34d399, #f472b6, #60a5fa);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            white-space: nowrap;
+            border-right: 3px solid rgba(255, 255, 255, 0.6);
+            overflow: hidden;
+            animation: cursorBlink 0.7s infinite, gradientMove 3s ease infinite;
+            margin-bottom: 20px;
+        }
+
+        .subtitleA {
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: #e5e7eb;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity .6s ease, transform .6s ease;
+        }
+
+        @keyframes cursorBlink {
+
+            0%,
+            50% {
+                border-color: rgba(255, 255, 255, 0.6);
+            }
+
+            51%,
+            100% {
+                border-color: transparent;
+            }
+        }
+
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Chat Icons */
+        .chat-icons {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .chat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            transform: translateY(-100vh);
+            opacity: 0;
+        }
+
+        .chat-icon.whatsapp {
+            background: #25D366;
+        }
+
+        .chat-icon.ai {
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+        }
+
+        .chat-icon:hover {
+            transform: scale(1.1) translateY(0) !important;
+        }
+
+        .iframe{
+            width: 450px;
+            height: 350px;
+           
+        }
+
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .h1 {
+                font-size: 2.2rem;
+            }
+
+            .game-area {
+                height: 400px;
+            }
+
+            #rocket {
+                width: 60px;
+                height: 120px;
+            }
+
+            .rocket-body {
+                width: 60px;
+                height: 90px;
+            }
+
+            .rocket-top {
+                border-left: 30px solid transparent;
+                border-right: 30px solid transparent;
+                border-bottom: 30px solid #ff6b6b;
+                top: -30px;
+            }
+
+            .rocket-fin-left,
+            .rocket-fin-right {
+                border-top: 20px solid transparent;
+                border-bottom: 20px solid transparent;
+            }
+
+            .rocket-fin-left {
+                border-right: 30px solid #ff6b6b;
+                left: -20px;
+            }
+
+            .rocket-fin-right {
+                border-left: 30px solid #ff6b6b;
+                right: -20px;
+            }
+
+            .rocket-window {
+                width: 20px;
+                height: 20px;
+                top: 20px;
+                left: 20px;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding-top: 150px;
+            }
+
+            .hero-content {
+                margin-bottom: 50px;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero-visual {
+                position: relative;
+                width: 100%;
+                height: 400px;
+                /* transform: none; */
+                margin-top: 30px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .nav-links,
+            .cta-nav {
+                display: none;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-Scroll {
+                padding: 20px;
+            }
+
+            #controls-Scroll{
+                display: none !important;
+            }
+
+            .marquee-item {
+                min-width: 160px;
+                height: 70px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (min-width: 1023px) {
+            .hero h1 {
+                font-size: 3.5rem;
+            }
+
+            .hero-visual {
+                width: 100%;
+            }
+        }
+
+        @media (max-width:324px) {
+            .hero {
+                height: 600px;
+            }
+
+            #controls-Scroll {
+                display: none !important;
+            }
+
+
+            .hero-visual {
+                width: 100%;
+                position: absolute !important;
+            }
+
+            .features {
+                padding: 0px !important;
+            }
+
+            .main-headingA {
+                font-size: 46px !important;
+            }
+
+            .subtitleA {
+                font-size: 22px !important;
+            }
+
+            .cta-nav {
+                display: none;
+            }
+            .iframe{
+            width: 300px;
+            height: 250px;
+            
+        }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Game Section -->
+    <div class="game-section" id="game-section">
+        <header class="header">
+           
+            <h1 class="h1"> <span> <img src="logo-dm.PNG" alt="logo" class="company-logo"></span> Dragon Media</h1>
+            <p class="subtitle">Complete the mission to reveal our Dragon Media website!</p>
+
+            <div class="stage-indicator">
+                <div class="stage-dot active" id="stage1-dot"></div>
+                <div class="stage-dot" id="stage2-dot"></div>
+                <div class="stage-dot" id="stage3-dot"></div>
+            </div>
+        </header>
+
+        <div class="game-container">
+            <div class="instructions" id="stage1-instructions">
+                <h2><i class="fas fa-info-circle"></i> Mission Briefing</h2>
+                <p>Drag the rocket from its current position and place it onto the launch pad. The drop zone will
+                    highlight when you're close.</p>
+            </div>
+
+            <div class="instructions" id="stage2-instructions" style="display: none;">
+                <h2><i class="fas fa-check-circle"></i> Rocket Positioned</h2>
+                <p>Great! The rocket is correctly positioned. Now click the launch button to initiate the countdown
+                    sequence.</p>
+            </div>
+
+            <div class="game-area">
+                <div class="stars" id="stars"></div>
+                <div class="drop-zone" id="drop-zone">Drop Rocket Here</div>
+
+                <div id="rocket">
+                    <div class="rocket-body">
+                        <div class="rocket-top"></div>
+                        <div class="rocket-fin-left"></div>
+                        <div class="rocket-fin-right"></div>
+                        <div class="rocket-window"></div>
+                    </div>
+                    <div class="fire"></div>
+                </div>
+
+                <div id="launcher">
+                    <div class="launcher-base"></div>
+                    <div class="launcher-pole"></div>
+                    <div class="launcher-holder"></div>
+                </div>
+
+                <div id="countdown"></div>
+            </div>
+
+            <button id="launch-btn" disabled>
+                <i class="fas fa-play"></i> Launch Rocket
+            </button>
+        </div>
+    </div>
+
+    <!-- Website Section -->
+    <div class="website-section" id="website-section">
+        <div class="website-body">
+            <div id="custom-cursor"></div>
+            <div class="cursor-follower"></div>
+            <div class="particles-container" id="particles-container"></div>
+
+            <header class="website-header">
+                <div class="containerx">
+                    <nav class="s-nav">
+                        
+                        <div class="logo">Dragon Media</div>
+                        <div class="nav-links">
+                            <a href="#">About</a>
+                            <a href="#">Services</a>
+                            <a href="#">All Courses</a>
+                            <a href="#">Career</a>
+                            <a href="#">Contact</a>
+                        </div>
+                        <div class="menu-toggle" id="menuToggle">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <button class="cta-nav">Admin</button>
+                    </nav>
+                </div>
+            </header>
+
+            <!-- Mobile Navigation -->
+            <div class="mobile-nav" id="mobileNav">
+                <button class="close-menu" id="closeMenu">
+                    <i class="fas fa-times"></i>
+                </button>
+                <a href="#">About</a>
+                <a href="#">Services</a>
+                <a href="#">All Courses</a>
+                <a href="#">Career</a>
+                <a href="#">Contact</a>
+                <a href="#">Admin</a>
+            </div>
+
+
+            <section class="hero">
+                <div class="containerx">
+                    <div class="text-body">
+                        <h1 class="main-headingA" id="mainHeadingA"></h1>
+                        <h2 class="subtitleA" id="rotatingSubtitle"></h2>
+                    </div>
+                    <div class="hero-content">
+                        <a href="#" class="cta-button">
+                            <span>Start Exploring</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div id="canvas-container"></div>
+                    <div class="floating-shapes">
+                        <div class="shape shape-1"></div>
+                        <div class="shape shape-2"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="features">
+                <div class="containerx">
+                    <h2 class="section-title">Unleash Creativity</h2>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-cube"></i>
+                            </div>
+                            <h3>Immersive 3D</h3>
+                            <p>Create stunning 3D experiences with our intuitive tools and extensive library of assets.
+                            </p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <h3>Real-time Interaction</h3>
+                            <p>Engage users with interactive elements that respond instantly to their actions.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-palette"></i>
+                            </div>
+                            <h3>Visual Excellence</h3>
+                            <p>Access a vast collection of high-quality materials, lighting, and post-processing
+                                effects.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="scroll-text">
+                <div class="container-Scroll">
+                    <div class="section-Scroll">
+                        <h2 class="section-Scroll-title">Featured Technologies</h2>
+
+                        <div class="marquee-container">
+                            <div class="marquee-track" id="marqueeTrack">
+                                <div class="marquee-item">
+                                    <i class="fab fa-html5"></i> HTML5
+                                </div>
+                                <div class="marquee-item">
+                                    <i class="fab fa-css3-alt"></i> CSS3
+                                </div>
+                                <div class="marquee-item">
+                                    <i class="fab fa-js"></i> JavaScript
+                                </div>
+                                <div class="marquee-item">
+                                    <i class="fab fa-react"></i> React
+                                </div>
+                                <div class="marquee-item">
+                                    <i class="fab fa-vuejs"></i> Vue.js
+                                </div>
+                                <div class="marquee-item">
+                                    <i class="fab fa-angular"></i> Angular
+                                </div>
+                                <div class="marquee-item">
+                                    <i class="fab fa-node-js"></i> Node.js
+                                </div>
+                                <div class="marquee-item">
+                                    <i class="fab fa-python"></i> Python
+                                </div>
+                                <div class="marquee-item">
+                                    <i class="fab fa-php"></i> PHP
+                                </div>
+                                <div class="marquee-item">
+                                    <i class="fab fa-laravel"></i> Laravel
+                                </div>
+                                <div class="marquee-item">
+                                    <i class="fab fa-docker"></i> Docker
+                                </div>
+                                <div class="marquee-item">
+                                    <i class="fab fa-aws"></i> AWS
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="controls-Scroll" id="controls-Scroll">
+                            <button class="btn-Glassy" id="pauseBtn">
+                                <i class="fas fa-pause"></i> Pause
+                            </button>
+                            <button class="btn-Glassy" id="resumeBtn">
+                                <i class="fas fa-play"></i> Resume
+                            </button>
+                            <button class="btn-Glassy" id="reverseBtn">
+                                <i class="fas fa-retweet"></i> Reverse
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="cta-section">
+                <div class="containerx">
+                    <div class="cta-content">
+                        <h2>Ready to Transform Your Vision?</h2>
+                        <p>Join thousands of creators building the next generation of digital experiences.</p>
+                        <a href="#" class="cta-button">
+                            <span>Create Your Account</span>
+                            <i class="fas fa-rocket"></i>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="website-footer">
+                <div class="containerx">
+                    <div class="footer-content">
+                        <div class="footer-about">
+                            <h3>About Dragon Media</h3>
+                            <p>We are a creative digital agency based in Thanjavur, specializing in innovative web
+                                solutions, immersive 3D experiences, and cutting-edge digital marketing strategies.
+                            <br>
+                            
+                        </p>
+
+                            <div class="social-links">
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                                <a href="#"><i class="fab fa-dribbble"></i></a>
+                                <a href="#"><i class="fab fa-instagram"></i></a>
+                                <a href="#"><i class="fab fa-github"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="footer-links">
+                            <h3>Quick Links</h3>
+                            <ul>
+                                <li><a href="#">Home</a></li>
+                                <li><a href="#">About Us</a></li>
+                                <li><a href="#">Services</a></li>
+                                <li><a href="#">Portfolio</a></li>
+                                <li><a href="#">Contact</a></li>
+                            </ul>
+                        </div>
+                        <div>
+
+                            <iframe class="iframe1"
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4528.768801377452!2d79.1188505253109!3d10.74874104163191!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8615cd861238a00b%3A0xc0e0e7338f9b49db!2sDM%20TECH%20PRO(Digital%20Marketing%20Agency%2FAcademy)!5e0!3m2!1sen!2sin!4v1764393733572!5m2!1sen!2sin"
+                                 style="border:1px solid blue; border-radius:20px;" allowfullscreen="" loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                    </div>
+                    <div class="website-footer-bottom">
+                        <p>&copy; 2025 DRAGON MEDIA. All rights reserved. Developed By Dragon Media.</p>
+                        <!-- <p>Call: 74491 44603 and </p> -->
+                    </div>
+                </div>
+            </footer>
+
+            <button class="reset-btn" onclick="resetGame()">
+                <i class="fas fa-redo"></i> Play Again
+            </button>
+        </div>
+    </div>
+
+    <!-- Chat Icons -->
+    <div class="chat-icons" id="chatIcons">
+        <div class="chat-icon whatsapp">
+            <i class="fab fa-whatsapp"></i>
+        </div>
+        <div class="chat-icon ai">
+            <i class="fas fa-robot"></i>
+        </div>
+    </div>
+
+
+    <script>
+        // ==============================
+        // GAME LOGIC
+        // ==============================
+
+        // Game state
+        let gameState = {
+            stage: 1,
+            rocketPlaced: false
+        };
+
+        // DOM elements
+        const gameSection = document.getElementById('game-section');
+        const websiteSection = document.getElementById('website-section');
+        const rocket = document.getElementById('rocket');
+        const dropZone = document.getElementById('drop-zone');
+        const launchBtn = document.getElementById('launch-btn');
+        const countdown = document.getElementById('countdown');
+        const stage1Instructions = document.getElementById('stage1-instructions');
+        const stage2Instructions = document.getElementById('stage2-instructions');
+        const stage1Dot = document.getElementById('stage1-dot');
+        const stage2Dot = document.getElementById('stage2-dot');
+        const stage3Dot = document.getElementById('stage3-dot');
+
+        // Three.js variables
+        let scene, camera, renderer, particles;
+
+        // Initialize game
+        function initGame() {
+            createStars();
+            createComets();
+            positionRocketRandomly();
+            setupDragAndDrop();
+
+            launchBtn.addEventListener('click', startLaunchSequence);
+            updateUI();
+        }
+
+        // Create stars for background
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            if (!starsContainer) return;
+
+            const starCount = 250;
+
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+
+                const size = Math.random() * 3;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animationDelay = `${Math.random() * 5}s`;
+
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Create occasional comets
+        function createComets() {
+            setInterval(() => {
+                if (Math.random() > 0.7) {
+                    const comet = document.createElement('div');
+                    comet.classList.add('comet');
+
+                    const startX = Math.random() * 100;
+                    comet.style.left = `${startX}%`;
+                    comet.style.top = '0';
+
+                    const gameArea = document.querySelector('.game-area');
+                    if (gameArea) {
+                        gameArea.appendChild(comet);
+
+                        const animation = comet.animate([
+                            { transform: 'translate(0, 0)', opacity: 1 },
+                            { transform: `translate(${Math.random() * 100 - 50}px, ${window.innerHeight}px)`, opacity: 0 }
+                        ], {
+                            duration: 2000 + Math.random() * 3000,
+                            easing: 'linear'
+                        });
+
+                        animation.onfinish = () => {
+                            comet.remove();
+                        };
+                    }
+                }
+            }, 3000);
+        }
+
+        // Position rocket randomly on the page
+        function positionRocketRandomly() {
+            const gameArea = document.querySelector('.game-area');
+            if (!gameArea || !rocket) return;
+
+            const maxX = gameArea.offsetWidth - rocket.offsetWidth - 40;
+            const maxY = gameArea.offsetHeight - rocket.offsetHeight - 250;
+
+            const randomX = 40 + Math.floor(Math.random() * maxX);
+            const randomY = 40 + Math.floor(Math.random() * maxY);
+
+            rocket.style.left = `${randomX}px`;
+            rocket.style.top = `${randomY}px`;
+        }
+
+        // Set up drag and drop functionality
+        function setupDragAndDrop() {
+            if (!rocket) return;
+
+            let isDragging = false;
+            let offsetX, offsetY;
+
+            // Mouse events
+            rocket.addEventListener('mousedown', startDrag);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', stopDrag);
+
+            // Touch events for mobile
+            rocket.addEventListener('touchstart', startDragTouch, { passive: false });
+            document.addEventListener('touchmove', dragTouch, { passive: false });
+            document.addEventListener('touchend', stopDrag);
+
+            function startDrag(e) {
+                isDragging = true;
+                offsetX = e.clientX - rocket.offsetLeft;
+                offsetY = e.clientY - rocket.offsetTop;
+                rocket.style.cursor = 'grabbing';
+                e.preventDefault();
+            }
+
+            function startDragTouch(e) {
+                isDragging = true;
+                const touch = e.touches[0];
+                offsetX = touch.clientX - rocket.offsetLeft;
+                offsetY = touch.clientY - rocket.offsetTop;
+                rocket.style.cursor = 'grabbing';
+                e.preventDefault();
+            }
+
+            function drag(e) {
+                if (!isDragging) return;
+
+                const gameArea = document.querySelector('.game-area');
+                const gameAreaRect = gameArea.getBoundingClientRect();
+
+                let newX = e.clientX - offsetX;
+                let newY = e.clientY - offsetY;
+
+                newX = Math.max(0, Math.min(newX, gameAreaRect.width - rocket.offsetWidth));
+                newY = Math.max(0, Math.min(newY, gameAreaRect.height - rocket.offsetHeight));
+
+                rocket.style.left = `${newX}px`;
+                rocket.style.top = `${newY}px`;
+
+                checkRocketPosition();
+            }
+
+            function dragTouch(e) {
+                if (!isDragging) return;
+
+                const touch = e.touches[0];
+                const gameArea = document.querySelector('.game-area');
+                const gameAreaRect = gameArea.getBoundingClientRect();
+
+                let newX = touch.clientX - offsetX;
+                let newY = touch.clientY - offsetY;
+
+                newX = Math.max(0, Math.min(newX, gameAreaRect.width - rocket.offsetWidth));
+                newY = Math.max(0, Math.min(newY, gameAreaRect.height - rocket.offsetHeight));
+
+                rocket.style.left = `${newX}px`;
+                rocket.style.top = `${newY}px`;
+
+                checkRocketPosition();
+                e.preventDefault();
+            }
+
+            function stopDrag() {
+                isDragging = false;
+                rocket.style.cursor = 'grab';
+                checkRocketPosition(true);
+            }
+        }
+
+        // Check if rocket is positioned correctly over the launcher
+        function checkRocketPosition(snapIfClose = false) {
+            if (!rocket || !dropZone) return;
+
+            const rocketRect = rocket.getBoundingClientRect();
+            const dropZoneRect = dropZone.getBoundingClientRect();
+
+            const rocketCenterX = rocketRect.left + rocketRect.width / 2;
+            const rocketCenterY = rocketRect.top + rocketRect.height / 2;
+
+            const dropZoneCenterX = dropZoneRect.left + dropZoneRect.width / 2;
+            const dropZoneCenterY = dropZoneRect.top + dropZoneRect.height / 2;
+
+            const distanceX = Math.abs(rocketCenterX - dropZoneCenterX);
+            const distanceY = Math.abs(rocketCenterY - dropZoneCenterY);
+
+            if (distanceX < 100 && distanceY < 100) {
+                dropZone.classList.add('active');
+
+                if (snapIfClose && distanceX < 80 && distanceY < 80) {
+                    const gameArea = document.querySelector('.game-area');
+                    const gameAreaRect = gameArea.getBoundingClientRect();
+
+                    const snapX = dropZoneRect.left - gameAreaRect.left + (dropZoneRect.width - rocketRect.width) / 2;
+                    const snapY = dropZoneRect.top - gameAreaRect.top + (dropZoneRect.height - rocketRect.height) / 2;
+
+                    rocket.style.left = `${snapX}px`;
+                    rocket.style.top = `${snapY}px`;
+
+                    if (!gameState.rocketPlaced) {
+                        gameState.rocketPlaced = true;
+                        gameState.stage = 2;
+                        updateUI();
+                        playSound('placement');
+                    }
+                }
+            } else {
+                dropZone.classList.remove('active');
+
+                if (gameState.rocketPlaced) {
+                    gameState.rocketPlaced = false;
+                    gameState.stage = 1;
+                    updateUI();
+                }
+            }
+        }
+
+        // Update UI based on game state
+        function updateUI() {
+            if (!stage1Dot || !stage2Dot || !stage3Dot) return;
+
+            stage1Dot.classList.toggle('active', gameState.stage >= 1);
+            stage2Dot.classList.toggle('active', gameState.stage >= 2);
+            stage3Dot.classList.toggle('active', gameState.stage >= 3);
+
+            if (gameState.stage === 1) {
+                if (stage1Instructions) stage1Instructions.style.display = 'block';
+                if (stage2Instructions) stage2Instructions.style.display = 'none';
+                if (launchBtn) launchBtn.disabled = true;
+            } else if (gameState.stage === 2) {
+                if (stage1Instructions) stage1Instructions.style.display = 'none';
+                if (stage2Instructions) stage2Instructions.style.display = 'block';
+                if (launchBtn) launchBtn.disabled = false;
+            }
+        }
+
+        // Launch sequence
+        function startLaunchSequence() {
+            if (gameState.stage !== 2) return;
+
+            gameState.stage = 3;
+            updateUI();
+            if (launchBtn) launchBtn.disabled = true;
+
+            if (countdown) {
+                countdown.style.display = 'block';
+            }
+            if (rocket) {
+                rocket.classList.add('launching');
+            }
+
+            let count = 3;
+            if (countdown) countdown.textContent = count;
+            playSound('countdown');
+
+            const countdownInterval = setInterval(() => {
+                count--;
+                if (countdown) countdown.textContent = count;
+
+                if (count === 0) {
+                    clearInterval(countdownInterval);
+                    playSound('launch');
+                    if (countdown) countdown.style.display = 'none';
+                    if (rocket) {
+                        rocket.classList.add('rocket-launch');
+                        rocket.classList.remove('launching');
+                    }
+
+                    gameState.stage = 4;
+                    if (stage3Dot) stage3Dot.classList.add('active');
+
+                    setTimeout(() => {
+                        // Hide game and show website
+                        if (gameSection) gameSection.style.display = 'none';
+                        if (websiteSection) websiteSection.style.display = 'block';
+
+                        // Reset scroll position to top
+                        window.scrollTo(0, 0);
+                        document.body.scrollTop = 0;
+                        document.documentElement.scrollTop = 0;
+
+                        // Force reflow and ensure proper rendering
+                        setTimeout(() => {
+                            // Initialize website animations
+                            initWebsiteAnimations();
+
+                            // Trigger resize to fix any layout issues
+                            window.dispatchEvent(new Event('resize'));
+                        }, 100);
+                    }, 3500);
+                } else {
+                    playSound('countdown');
+                }
+            }, 1000);
+        }
+
+        // Sound effects using Web Audio API
+        function playSound(type) {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+                if (type === 'placement') {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+
+                    oscillator.frequency.value = 800;
+                    oscillator.type = 'sine';
+
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.2);
+                }
+                else if (type === 'countdown') {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+
+                    oscillator.frequency.value = 600;
+                    oscillator.type = 'sine';
+
+                    gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.5);
+                }
+                else if (type === 'launch') {
+                    const oscillator1 = audioContext.createOscillator();
+                    const oscillator2 = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+
+                    oscillator1.connect(gainNode);
+                    oscillator2.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+
+                    oscillator1.frequency.value = 100;
+                    oscillator2.frequency.value = 150;
+                    oscillator1.type = 'sawtooth';
+                    oscillator2.type = 'triangle';
+
+                    gainNode.gain.setValueAtTime(0.7, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 2);
+
+                    oscillator1.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 1);
+                    oscillator2.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + 1);
+
+                    oscillator1.start(audioContext.currentTime);
+                    oscillator2.start(audioContext.currentTime);
+                    oscillator1.stop(audioContext.currentTime + 2);
+                    oscillator2.stop(audioContext.currentTime + 2);
+                }
+            } catch (error) {
+                console.log("Audio context not supported:", error);
+            }
+        }
+
+        // Reset game function
+        function resetGame() {
+            // Reset scroll position
+            window.scrollTo(0, 0);
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+
+            // Show game and hide website
+            if (gameSection) gameSection.style.display = 'block';
+            if (websiteSection) websiteSection.style.display = 'none';
+
+            // Reset rocket
+            if (rocket) {
+                rocket.classList.remove('rocket-launch', 'launching');
+                positionRocketRandomly();
+            }
+
+            // Reset game state
+            gameState = {
+                stage: 1,
+                rocketPlaced: false
+            };
+
+            // Hide countdown
+            if (countdown) countdown.style.display = 'none';
+
+            // Reset drop zone
+            if (dropZone) dropZone.classList.remove('active');
+
+            // Update UI
+            updateUI();
+            // Ensure body overflow is reset
+            document.body.style.overflow = 'auto';
+        }
+
+        // ==============================
+        // WEBSITE ANIMATIONS AND LOGIC
+        // ==============================
+
+        function initWebsiteAnimations() {
+            // Reset scroll position again to be sure
+            window.scrollTo(0, 0);
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+            // Initialize cursor
+            initCustomCursor();
+
+            // Initialize Three.js scene
+            initThreeJS();
+
+            // Initialize marquee
+            initMarquee();
+
+            // Initialize GSAP animations
+            initGSAPAnimations();
+
+            // Initialize text animations
+            initTextAnimations();
+
+            // Initialize mobile menu
+            initMobileMenu();
+
+            // Initialize chat icons animation with 10 second delay
+            setTimeout(initChatIcons, 10000);
+
+            // Force a reflow to fix any rendering issues
+            setTimeout(() => {
+                websiteSection.style.opacity = '1';
+                document.body.style.overflow = 'auto';
+            }, 50);
+        }
+
+        // Three.js resize handler
+        function handleResize() {
+            const canvasContainer = document.getElementById('canvas-container');
+            if (canvasContainer && camera && renderer) {
+                const width = canvasContainer.clientWidth;
+                const height = canvasContainer.clientHeight;
+
+                if (width > 0 && height > 0) {
+                    camera.aspect = width / height;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(width, height);
+                }
+            }
+        }
+
+        // Three.js scene initialization
+        function initThreeJS() {
+            // Create scene
+            scene = new THREE.Scene();
+
+            // Create camera
+            const canvasContainer = document.getElementById('canvas-container');
+            if (!canvasContainer) return;
+
+            // Get proper dimensions
+            const width = canvasContainer.clientWidth || canvasContainer.offsetWidth;
+            const height = canvasContainer.clientHeight || canvasContainer.offsetHeight;
+
+            camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+            camera.position.z = 15;
+
+            // Create renderer
+            renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(width, height);
+            renderer.setClearColor(0x000000, 0);
+            canvasContainer.innerHTML = ''; // Clear any existing canvas
+            canvasContainer.appendChild(renderer.domElement);
+
+            // Create particle system
+            const particleCount = 1500;
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+
+            for (let i = 0; i < particleCount * 3; i += 3) {
+                positions[i] = (Math.random() - 0.5) * 50;
+                positions[i + 1] = (Math.random() - 0.5) * 50;
+                positions[i + 2] = (Math.random() - 0.5) * 50;
+
+                colors[i] = Math.random() * 0.5 + 0.5;
+                colors[i + 1] = Math.random() * 0.3 + 0.3;
+                colors[i + 2] = Math.random() * 0.8 + 0.2;
+            }
+
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 0.1,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8
+            });
+
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+
+            // Add lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
+
+            // Handle window resize
+            window.addEventListener('resize', handleResize);
+
+            // Call resize handler once to ensure proper sizing
+            setTimeout(handleResize, 200);
+
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                if (particles) {
+                    particles.rotation.x += 0.001;
+                    particles.rotation.y += 0.002;
+                    const time = Date.now() * 0.001;
+                    particles.scale.setScalar(1 + 0.1 * Math.sin(time * 2));
+                }
+                if (renderer && scene && camera) {
+                    renderer.render(scene, camera);
+                }
+            }
+
+            animate();
+        }
+
+        // Custom cursor functionality
+        function initCustomCursor() {
+            const cursor = document.getElementById('custom-cursor');
+            const follower = document.querySelector('.cursor-follower');
+            const particlesContainer = document.getElementById('particles-container');
+
+            if (!cursor || !follower || !particlesContainer) return;
+
+            let mouseX = 0, mouseY = 0;
+            let followerX = 0, followerY = 0;
+
+            function animateCursor() {
+                const ease = 0.15;
+                followerX += (mouseX - followerX) * ease;
+                followerY += (mouseY - followerY) * ease;
+                follower.style.transform = `translate3d(${followerX}px, ${followerY}px, 0)`;
+                requestAnimationFrame(animateCursor);
+            }
+
+            animateCursor();
+
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                createParticle(e.clientX, e.clientY);
+            });
+
+            // Interactive elements
+            const interactiveElements = document.querySelectorAll('.cta-button, .cta-nav, .feature-card, .nav-links a, .social-links a');
+
+            interactiveElements.forEach(element => {
+                element.addEventListener('mouseenter', () => {
+                    cursor.style.transform = 'scale(1.8)';
+                    follower.style.transform += ' scale(1.5)';
+                    follower.style.borderColor = 'var(--accent)';
+                    follower.style.background = 'rgba(0, 212, 255, 0.1)';
+                });
+
+                element.addEventListener('mouseleave', () => {
+                    cursor.style.transform = 'scale(1)';
+                    follower.style.transform = follower.style.transform.replace(' scale(1.5)', '');
+                    follower.style.borderColor = 'var(--primary)';
+                    follower.style.background = 'transparent';
+                });
+            });
+
+            // Create cursor trail particles
+            function createParticle(x, y) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+
+                particlesContainer.appendChild(particle);
+
+                if (typeof gsap !== 'undefined') {
+                    gsap.to(particle, {
+                        x: (Math.random() - 0.5) * 100,
+                        y: (Math.random() - 0.5) * 100,
+                        opacity: 0.6,
+                        duration: 0.8,
+                        ease: "power2.out"
+                    });
+
+                    gsap.to(particle, {
+                        opacity: 0,
+                        duration: 0.4,
+                        delay: 0.4,
+                        onComplete: () => {
+                            particle.remove();
+                        }
+                    });
+                }
+            }
+        }
+
+        // Marquee functionality
+        function initMarquee() {
+            const marqueeTrack = document.getElementById('marqueeTrack');
+            const pauseBtn = document.getElementById('pauseBtn');
+            const resumeBtn = document.getElementById('resumeBtn');
+            const reverseBtn = document.getElementById('reverseBtn');
+
+            if (!marqueeTrack) return;
+
+            // Clone marquee items for seamless loop
+            const originalItems = marqueeTrack.innerHTML;
+            marqueeTrack.innerHTML += originalItems;
+
+            // Pause on hover
+            const items = document.querySelectorAll('.marquee-item');
+            items.forEach(item => {
+                item.addEventListener('mouseenter', function () {
+                    marqueeTrack.style.animationPlayState = 'paused';
+                });
+
+                item.addEventListener('mouseleave', function () {
+                    marqueeTrack.style.animationPlayState = 'running';
+                });
+            });
+
+            // Control buttons
+            if (pauseBtn) {
+                pauseBtn.addEventListener('click', function () {
+                    marqueeTrack.style.animationPlayState = 'paused';
+                });
+            }
+
+            if (resumeBtn) {
+                resumeBtn.addEventListener('click', function () {
+                    marqueeTrack.style.animationPlayState = 'running';
+                });
+            }
+
+            let isReversed = false;
+            if (reverseBtn) {
+                reverseBtn.addEventListener('click', function () {
+                    if (isReversed) {
+                        marqueeTrack.style.animation = 'marquee 40s linear infinite';
+                        isReversed = false;
+                    } else {
+                        const style = document.createElement('style');
+                        style.textContent = `
+                    @keyframes marquee-reverse {
+                        0% { transform: translateX(-50%); }
+                        100% { transform: translateX(0); }
+                    }
+                `;
+                        document.head.appendChild(style);
+                        marqueeTrack.style.animation = 'marquee-reverse 40s linear infinite';
+                        isReversed = true;
+                    }
+                });
+            }
+        }
+
+        // GSAP animations
+        function initGSAPAnimations() {
+            if (typeof gsap === 'undefined') return;
+
+            // Register ScrollTrigger plugin
+            if (gsap.registerPlugin) {
+                gsap.registerPlugin(ScrollTrigger);
+            }
+
+            // Hero animations
+            gsap.to('.hero h1', {
+                duration: 1.2,
+                opacity: 1,
+                y: 0,
+                delay: 0.3,
+                ease: "power3.out"
+            });
+
+            gsap.to('.hero p', {
+                duration: 1.2,
+                opacity: 1,
+                y: 0,
+                delay: 0.5,
+                ease: "power3.out"
+            });
+
+            gsap.to('.cta-button', {
+                duration: 1.2,
+                opacity: 1,
+                y: 0,
+                delay: 0.7,
+                ease: "power3.out"
+            });
+
+            // Section animations with ScrollTrigger
+            if (typeof ScrollTrigger !== 'undefined') {
+                gsap.to('.section-title', {
+                    duration: 1,
+                    opacity: 1,
+                    y: 0,
+                    scrollTrigger: {
+                        trigger: '.section-title',
+                        start: 'top 80%',
+                        toggleActions: 'play none none reverse'
+                    }
+                });
+
+                gsap.to('.feature-card', {
+                    duration: 0.8,
+                    opacity: 1,
+                    y: 0,
+                    stagger: 0.2,
+                    scrollTrigger: {
+                        trigger: '.features-grid',
+                        start: 'top 70%',
+                        toggleActions: 'play none none reverse'
+                    }
+                });
+
+                gsap.to('.cta-section h2', {
+                    duration: 1,
+                    opacity: 1,
+                    y: 0,
+                    scrollTrigger: {
+                        trigger: '.cta-section',
+                        start: 'top 70%',
+                        toggleActions: 'play none none reverse'
+                    }
+                });
+
+                gsap.to('.cta-section p', {
+                    duration: 1,
+                    opacity: 1,
+                    y: 0,
+                    delay: 0.2,
+                    scrollTrigger: {
+                        trigger: '.cta-section',
+                        start: 'top 70%',
+                        toggleActions: 'play none none reverse'
+                    }
+                });
+            }
+        }
+
+        // Text animations
+        function initTextAnimations() {
+            // Main heading typewriter effect
+            const headingText = "Dragon Media";
+            const mainHeading = document.getElementById('mainHeadingA');
+            let headingIndex = 0;
+
+            function typeHeading() {
+                if (headingIndex < headingText.length && mainHeading) {
+                    mainHeading.textContent = headingText.slice(0, headingIndex + 1);
+                    headingIndex++;
+                    setTimeout(typeHeading, 90);
+                }
+            }
+
+            // Subtitle rotation
+            const subtitles = [
+                "Creative Web Experiences",
+                "Modern UI / UX Animations",
+                "Fast — Smooth — High Quality",
+                "Powered by Clean Code"
+            ];
+
+            let subtitleIndex = 0;
+            const rotatingSubtitle = document.getElementById('rotatingSubtitle');
+
+            function showSubtitle() {
+                if (!rotatingSubtitle) return;
+
+                rotatingSubtitle.style.opacity = 0;
+                rotatingSubtitle.style.transform = 'translateY(10px)';
+
+                setTimeout(() => {
+                    rotatingSubtitle.textContent = subtitles[subtitleIndex];
+                    rotatingSubtitle.style.opacity = 1;
+                    rotatingSubtitle.style.transform = 'translateY(0)';
+                }, 300);
+
+                subtitleIndex = (subtitleIndex + 1) % subtitles.length;
+            }
+
+            // Start text animations
+            typeHeading();
+            setTimeout(showSubtitle, 2000);
+            setInterval(showSubtitle, 2500);
+        }
+
+        // Mobile menu functionality
+        function initMobileMenu() {
+            const menuToggle = document.getElementById('menuToggle');
+            const mobileNav = document.getElementById('mobileNav');
+            const closeMenu = document.getElementById('closeMenu');
+
+            if (menuToggle && mobileNav && closeMenu) {
+                menuToggle.addEventListener('click', function () {
+                    mobileNav.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+
+                closeMenu.addEventListener('click', function () {
+                    mobileNav.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+
+                // Close menu when clicking on links
+                const mobileLinks = mobileNav.querySelectorAll('a');
+                mobileLinks.forEach(link => {
+                    link.addEventListener('click', function () {
+                        mobileNav.classList.remove('active');
+                        document.body.style.overflow = '';
+                    });
+                });
+            }
+        }
+
+        function initChatIcons() {
+            const chatIcons = document.getElementById('chatIcons');
+            if (chatIcons) {
+                const icons = chatIcons.querySelectorAll('.chat-icon');
+                icons.forEach((icon, index) => {
+                    setTimeout(() => {
+                        icon.style.transform = 'translateY(0)';
+                        icon.style.opacity = '1';
+                    }, index * 200);
+                });
+            }
+        }
+
+        // Initialize the game when page loads
+        window.addEventListener('load', initGame);
+    </script>
+</body>
+
+</html>
